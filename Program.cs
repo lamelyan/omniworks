@@ -1,3 +1,5 @@
+using OmniWorks.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,7 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddTransient<GlobalErrorHandling>();
+
 var app = builder.Build();
+
+app.UseMiddleware<GlobalErrorHandling>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -21,6 +27,11 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
+app.MapGet("/UnhandledExceptionTest", () =>
+{
+    throw new Exception("unhandled exception with lots of private data here");
+});
+    
 app.MapGet("/weatherforecast", () =>
     {
         var forecast = Enumerable.Range(1, 5).Select(index =>
