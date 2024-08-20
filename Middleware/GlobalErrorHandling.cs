@@ -27,6 +27,7 @@ public class GlobalErrorHandling : IMiddleware
 
             var json = JsonSerializer.Serialize(problem);
 
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             context.Response.ContentType = "applicaiton/json";
 
             await context.Response.WriteAsync(json);
